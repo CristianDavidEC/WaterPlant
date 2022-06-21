@@ -1,9 +1,4 @@
-/*********
-  Rui Santos
-  Complete project details at https://randomnerdtutorials.com  
-*********/
-// Import required libraries
-
+/*
 #include <Adafruit_Sensor.h>
 #include "WiFi.h"
 #include "ESPAsyncWebServer.h"
@@ -16,7 +11,7 @@ const char* password = "10264928";
 // Set LED GPIO
 const int ledPin = 2;
 // Stores LED state
-String ledStat e;
+String ledState;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -97,3 +92,4 @@ void setup(){
 void loop(){
   
 }
+*/

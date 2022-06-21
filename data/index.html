@@ -11,16 +11,27 @@
   <h2>ESP32 DHT Humedad y Temperatura</h2>
   <p>
     <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
-    <span class="dht-labels">Temperature</span> 
+    <span class="dht-labels">Temperatura</span> 
     <span id="temperature">%TEMPERATURE%</span>
     <sup class="units">&deg;C</sup>
   </p>
+  <div id="chart-temperature"></div>
+
   <p>
     <i class="fas fa-tint" style="color:#00add6;"></i> 
-    <span class="dht-labels">Humidity</span>
+    <span class="dht-labels">Humedad</span>
     <span id="humidity">%HUMIDITY%</span>
     <sup class="units">&percnt;</sup>
   </p>
-  <script src="app.js"></script>
+  <div id="chart-humidity"></div>
+
+  <p>
+    <i class="fas fa-leaf" style="color:#18a53e;"></i>
+    <span class="dht-labels">Humedad En Tierra</span>
+    <span id="humidityeart">%HUMIDITYEART%</span>
+    <sup class="units">&percnt;</sup>
+  </p>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="app.js"  type="module"></script>
 </body>
 </html>

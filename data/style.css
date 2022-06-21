@@ -4,6 +4,11 @@ html {
   margin: 0px auto;
   text-align: center;
 }
+
+body {
+  max-width: 80%;
+}
+
 h1{
   color: #0F3376;
   padding: 2vh;
