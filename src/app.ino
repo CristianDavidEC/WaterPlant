@@ -1,44 +1,68 @@
-#include <Adafruit_Sensor.h>
-#include "ESPAsyncWebServer.h"
+// Import required libraries
 #include "WiFi.h"
+#include "ESPAsyncWebServer.h"
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
 #include "SPIFFS.h"
-#include "Dht_Sensor.h"
-#include "Capacitive.h"
-#include "AsyncTCP.h"
 
-Dht_Sensor sensor_dht;
-Capacitive sensor_capacitive;
-sensor_t sensor;
-
-// network credentials
 const char *ssid = "FLIAGONZALEZ";
 const char *password = "10264928";
 
+const int dry = 300;
+const int wet = 0; 
+
+#define DHTPIN 25 
+#define DHTTYPE DHT11 // DHT 11
+DHT dht(DHTPIN, DHTTYPE);
 AsyncWebServer server(80);
 
-String processor(const String &var)
+
+// -------------- Functions --------------
+String readDHTTemperature()
 {
-    if (var == "TEMPERATURE")
+    float t = dht.readTemperature();
+    if (isnan(t))
     {
-        return sensor_dht.leer_temperatura();
+        Serial.println("Failed to read from DHT sensor!");
+        return "--";
     }
-    else if (var == "HUMIDITY")
+    else
     {
-        return sensor_dht.leer_humedad();
+        Serial.println("Temperature: " + String(t) + " °C");
+        return String(t);
     }
-    else if (var == "HUMIDITYEART")
+}
+
+String readDHTHumidity()
+{
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    float h = dht.readHumidity();
+    if (isnan(h))
     {
-        return sensor_capacitive.leer_humedad();
+        Serial.println("Failed to read from DHT sensor!");
+        return "--";
     }
-    return String();
+    else
+    {
+        Serial.println("Humedad: " + String(h) + " %");
+        return String(h);
+    }
+}
+
+String leer_humedad_cap()
+{
+    int sensorVal = analogRead(A5);
+    int percentageHumididy = map(sensorVal,dry, wet, 0, 100);
+    Serial.println("Humedad Tierra: " + String(percentageHumididy) + " %");
+    return String(percentageHumididy);
 }
 
 String verificar()
 {
-    float tem = sensor_dht.leer_temperatura().toFloat();
-    float hum = sensor_dht.leer_humedad().toFloat();
+    float tem = dht.readTemperature();
+    float hum = dht.readHumidity();
     
-    if (tem > 25 && hum > 30)
+    if (tem > 25 && hum < 30)
     {
         return "1";
     }
@@ -48,26 +72,47 @@ String verificar()
     }
 }
 
+String processor(const String &var)
+{
+    if (var == "TEMPERATURE")
+    {
+        return readDHTTemperature();
+    }
+    else if (var == "HUMIDITY")
+    {
+        return readDHTHumidity();
+    }
+    else if (var == "HUMIDITYEART")
+    {
+        return leer_humedad_cap();
+    }
+    return String();
+}
+
 void setup()
 {
+    // Serial port for debugging purposes
     Serial.begin(115200);
-    sensor_dht.iniciar_sensor();
+
+    dht.begin();
 
     if (!SPIFFS.begin(true))
     {
         Serial.println("An Error has occurred while mounting SPIFFS");
         return;
     }
-
+    // Connect to Wi-Fi
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(1000);
         Serial.println("Connecting to WiFi..");
     }
+
+    // Print ESP32 Local IP Address
     Serial.println(WiFi.localIP());
 
-    // Route to load index.html file
+    // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(SPIFFS, "/index.html", String(), false, processor); });
 
@@ -75,48 +120,22 @@ void setup()
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(SPIFFS, "/style.css", "text/css"); });
 
-    // Route to load app.js file
-    server.on("/app.js", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send(SPIFFS, "/app.js", String(), false, processor);});
-
-    // Events to change temperature and humidity
     server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(
-                    200,
-                    "text/plain",
-                    sensor_dht.leer_temperatura().c_str()); });
+              { request->send_P(200, "text/plain", readDHTTemperature().c_str()); });
 
     server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(
-                    200,
-                    "text/plain",
-                    sensor_dht.leer_humedad().c_str()); });
-
-    server.on("/humidityeart", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(
-                    200,
-                    "text/plain",
-                    sensor_capacitive.leer_humedad().c_str()); });
+              { request->send_P(200, "text/plain", readDHTHumidity().c_str()); });
     
-    /*server.on("/verificar", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(
-                    200,
-                    "text/plain",
-                    verificar().c_str()); });*/
+    server.on("/humidityeart", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send_P(200, "text/plain", leer_humedad_cap().c_str()); });
+    
+    server.on("/verificar", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send_P(200, "text/plain", verificar().c_str()); });
+    
     server.begin();
 }
 
 void loop()
 {
-    String humedad_tierra = sensor_capacitive.leer_humedad();
-    Serial.println("Humedad tierra: " + humedad_tierra + "%");
 
-    String temperatura = sensor_dht.leer_temperatura();
-    Serial.println("Temperatura: " + temperatura + "°C");
-
-    String humedad = sensor_dht.leer_humedad();
-    Serial.println("Humedad: " + humedad + "%");
-
-    Serial.println("----------------------------------");  
-    delay(1000);  
 }

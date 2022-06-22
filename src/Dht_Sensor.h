@@ -1,4 +1,4 @@
-#include <DHT.h>
+/*#include <DHT.h>
 #include <Adafruit_Sensor.h>
 
 #define DHTPIN 25
@@ -11,7 +11,7 @@ class Dht_Sensor
 {
 private:
 public:
-    Dht_Sensor(/* args */);
+    Dht_Sensor( args );
     void iniciar_sensor();
     String leer_temperatura();
     String leer_humedad();
@@ -48,3 +48,4 @@ String Dht_Sensor::leer_humedad() {
         return String(humidity);   
     }
 }
+*/
