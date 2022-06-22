@@ -3,6 +3,7 @@ html {
   display: inline-block;
   margin: 0px auto;
   text-align: center;
+  width: 70%;
 }
 
 h2 {
@@ -11,6 +12,22 @@ h2 {
 
 p {
   font-size: 3.0rem;
+}
+
+.informacion1{
+  font-size: 1.5rem;
+  color: #b82406;
+  border: 2px solid #b82406;
+  border-radius: 15px;
+  padding-bottom: 20px;
+}
+
+.informacion2{
+  font-size: 1.5rem;
+  color: #1569f1;
+  border: 2px solid #0f62e6;
+  border-radius: 15px;
+  padding-bottom: 20px;
 }
 
 .units {

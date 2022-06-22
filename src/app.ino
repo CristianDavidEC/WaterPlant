@@ -62,9 +62,12 @@ String verificar()
     float tem = dht.readTemperature();
     float hum = dht.readHumidity();
     
-    if (tem > 25 && hum < 30)
+    if (tem >= 25 && hum < 30)
     {
         return "1";
+    }
+    else if (tem < 22 && hum > 50) {
+        return "2";
     }
     else
     {
