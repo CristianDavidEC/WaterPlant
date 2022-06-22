@@ -4,6 +4,7 @@
 #include "SPIFFS.h"
 #include "Dht_Sensor.h"
 #include "Capacitive.h"
+#include "AsyncTCP.h"
 
 Dht_Sensor sensor_dht;
 Capacitive sensor_capacitive;
@@ -17,7 +18,6 @@ AsyncWebServer server(80);
 
 String processor(const String &var)
 {
-    // Serial.println(var);
     if (var == "TEMPERATURE")
     {
         return sensor_dht.leer_temperatura();
@@ -77,7 +77,7 @@ void setup()
 
     // Route to load app.js file
     server.on("/app.js", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send(SPIFFS, "/app.js", String(), false, processor); });
+              { request->send(SPIFFS, "/app.js", String(), false, processor);});
 
     // Events to change temperature and humidity
     server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -98,11 +98,11 @@ void setup()
                     "text/plain",
                     sensor_capacitive.leer_humedad().c_str()); });
     
-    server.on("/verificar", HTTP_GET, [](AsyncWebServerRequest *request)
+    /*server.on("/verificar", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send_P(
                     200,
                     "text/plain",
-                    verificar().c_str()); });
+                    verificar().c_str()); });*/
     server.begin();
 }
 
@@ -112,11 +112,11 @@ void loop()
     Serial.println("Humedad tierra: " + humedad_tierra + "%");
 
     String temperatura = sensor_dht.leer_temperatura();
-    Serial.println("Temperatura: " + String(temperatura) + "°C");
-    delay(1000);
+    Serial.println("Temperatura: " + temperatura + "°C");
 
     String humedad = sensor_dht.leer_humedad();
-    Serial.println("Humedad: " + String(humedad) + "%");
+    Serial.println("Humedad: " + humedad + "%");
 
-    Serial.println("----------------------------------");
+    Serial.println("----------------------------------");  
+    delay(1000);  
 }

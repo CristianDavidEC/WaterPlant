@@ -33,7 +33,7 @@ String Dht_Sensor::leer_temperatura(){
         return "Failed to read from DHT sensor!";
     }
     else
-    {
+    {   
         return String(temperature);
     }
 }

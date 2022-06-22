@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>ESP32 Web Server</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
   <h2>ESP32 DHT Humedad y Temperatura</h2>
   <p>
-    <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
-    <span class="dht-labels">Temperatura</span> 
+    <i class="fas fa-thermometer-half" style="color:#059e8a;"></i>
+    <span class="dht-labels">Temperatura</span>
     <span id="temperature">%TEMPERATURE%</span>
     <sup class="units">&deg;C</sup>
   </p>
-  <div id="chart-temperature"></div>
 
   <p>
-    <i class="fas fa-tint" style="color:#00add6;"></i> 
+    <i class="fas fa-tint" style="color:#00add6;"></i>
     <span class="dht-labels">Humedad</span>
     <span id="humidity">%HUMIDITY%</span>
     <sup class="units">&percnt;</sup>
   </p>
-  <div id="chart-humidity"></div>
 
   <p>
     <i class="fas fa-leaf" style="color:#18a53e;"></i>
@@ -31,7 +31,8 @@
     <span id="humidityeart">%HUMIDITYEART%</span>
     <sup class="units">&percnt;</sup>
   </p>
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <script src="app.js"  type="module"></script>
+
+  <script src="app.js"></script>
 </body>
+
 </html>
