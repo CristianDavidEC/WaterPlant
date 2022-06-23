@@ -66,7 +66,7 @@ String verificar()
     {
         return "1";
     }
-    else if (tem < 22 && hum > 50) {
+    else if (tem < 20 && hum > 50) {
         return "2";
     }
     else
