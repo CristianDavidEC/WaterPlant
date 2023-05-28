@@ -1,147 +1,188 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
-    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="style.css">
-</head>
+  <body>
+    <h1>WaterPlant</h1>
 
-<body>
-  <h2>ESP32 DHT11 Temperature And Humidity </h2>
+    <div id="informacion"></div>
 
-  <div id="informacion">
-  </div>
+    <p>
+      <i class="fas fa-thermometer-half" style="color: #059e8a"></i>
+      <span class="dht-labels">Temperature</span>
+      <span id="temperature">%TEMPERATURE%</span>
+      <sup class="units">&deg;C</sup>
+    </p>
+    <div id="chart-temperature" class="container"></div>
 
-  <p>
-    <i class="fas fa-thermometer-half" style="color:#059e8a;"></i>
-    <span class="dht-labels">Temperature</span>
-    <span id="temperature">%TEMPERATURE%</span>
-    <sup class="units">&deg;C</sup>
-  </p>
-  <div id="chart-temperature" class="container"></div>
+    <p>
+      <i class="fas fa-tint" style="color: #00add6"></i>
+      <span class="dht-labels">Humidity</span>
+      <span id="humidity">%HUMIDITY%</span>
+      <sup class="units">&percnt;</sup>
+    </p>
+    <div id="chart-humidity" class="container"></div>
 
-  <p>
-    <i class="fas fa-tint" style="color:#00add6;"></i>
-    <span class="dht-labels">Humidity</span>
-    <span id="humidity">%HUMIDITY%</span>
-    <sup class="units">&percnt;</sup>
-  </p>
-  <div id="chart-humidity" class="container"></div>
+    <p>
+      <i class="fas fa-leaf" style="color: #18a53e"></i>
+      <span class="dht-labels">Humedad En Tierra</span>
+      <span id="humidityeart">%HUMIDITYEART%</span>
+      <sup class="units">&percnt;</sup>
+    </p>
 
-  <p>
-    <i class="fas fa-leaf" style="color:#18a53e;"></i>
-    <span class="dht-labels">Humedad En Tierra</span>
-    <span id="humidityeart">%HUMIDITYEART%</span>
-    <sup class="units">&percnt;</sup>
-  </p>
-
-</body>
-<script>
-  var chartH = new Highcharts.Chart({
-    chart: { renderTo: 'chart-humidity' },
-    title: { text: 'Humidity' },
-    series: [{
-      showInLegend: false,
-      data: []
-    }],
-    plotOptions: {
-      line: {
-        animation: false,
-        dataLabels: { enabled: true }
+    <div id="chart-humidityeart" class="container"></div>
+  </body>
+  <script>
+    var chartH = new Highcharts.Chart({
+      chart: { renderTo: "chart-humidity" },
+      title: { text: "Humidity" },
+      series: [
+        {
+          showInLegend: false,
+          data: [],
+        },
+      ],
+      plotOptions: {
+        line: {
+          animation: false,
+          dataLabels: { enabled: true },
+        },
+        series: { color: "#00add6" },
       },
-      series: { color: '#00add6' }
-    },
-    xAxis: {
-      type: 'datetime',
-      dateTimeLabelFormats: { second: '%H:%M:%S' }
-    },
-    yAxis: {
-      title: { text: 'Humidity (%)' }
-    },
-    credits: { enabled: false }
-  });
-  setInterval(function () {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("humidity").innerHTML = this.responseText;
-        console.log(this.responseText + "Humedad");
-        var x = (new Date()).getTime(),
-          y = parseFloat(this.responseText);
-        if (chartH.series[0].data.length > 40) {
-          chartH.series[0].addPoint([x, y], true, true, true);
-        } else {
-          chartH.series[0].addPoint([x, y], true, false, true);
-        }
-      }
-    };
-    xhttp.open("GET", "/humidity", true);
-    xhttp.send();
-  },5000);
-
-  var chartT = new Highcharts.Chart({
-    chart: { renderTo: 'chart-temperature' },
-    title: { text: 'Temperature' },
-    series: [{
-      showInLegend: false,
-      data: []
-    }],
-    plotOptions: {
-      line: {
-        animation: false,
-        dataLabels: { enabled: true }
+      xAxis: {
+        type: "datetime",
+        dateTimeLabelFormats: { second: "%H:%M:%S" },
       },
-      series: { color: '#059e8a' }
-    },
-    xAxis: {
-      type: 'datetime',
-      dateTimeLabelFormats: { second: '%H:%M:%S' }
-    },
-    yAxis: {
-      title: { text: 'Temperature C' }
-    },
-    credits: { enabled: false }
-  });
-  setInterval(function () {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("temperature").innerHTML = this.responseText;
-        var x = (new Date()).getTime(),
-          y = parseFloat(this.responseText);
-        console.log(this.responseText + "temperatura");
-        if (chartT.series[0].data.length > 40) {
-          chartT.series[0].addPoint([x, y], true, true, true);
-        } else {
-          chartT.series[0].addPoint([x, y], true, false, true);
+      yAxis: {
+        title: { text: "Humidity (%)" },
+      },
+      credits: { enabled: false },
+    });
+    setInterval(function () {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("humidity").innerHTML = this.responseText;
+          console.log(this.responseText + "Humedad");
+          var x = new Date().getTime(),
+            y = parseFloat(this.responseText);
+          if (chartH.series[0].data.length > 40) {
+            chartH.series[0].addPoint([x, y], true, true, true);
+          } else {
+            chartH.series[0].addPoint([x, y], true, false, true);
+          }
         }
-      }
-    };
-    xhttp.open("GET", "/temperature", true);
-    xhttp.send();
-  }, 5000);
+      };
+      xhttp.open("GET", "/humidity", true);
+      xhttp.send();
+    }, 5000);
 
-  setInterval(function () {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("humidityeart").innerHTML = this.responseText;
-      }
-    };
-    xhttp.open("GET", "/humidityeart", true);
-    xhttp.send();
-  }, 5000);
+    var chartT = new Highcharts.Chart({
+      chart: { renderTo: "chart-temperature" },
+      title: { text: "Temperature" },
+      series: [
+        {
+          showInLegend: false,
+          data: [],
+        },
+      ],
+      plotOptions: {
+        line: {
+          animation: false,
+          dataLabels: { enabled: true },
+        },
+        series: { color: "#059e8a" },
+      },
+      xAxis: {
+        type: "datetime",
+        dateTimeLabelFormats: { second: "%H:%M:%S" },
+      },
+      yAxis: {
+        title: { text: "Temperature C" },
+      },
+      credits: { enabled: false },
+    });
+    setInterval(function () {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("temperature").innerHTML = this.responseText;
+          var x = new Date().getTime(),
+            y = parseFloat(this.responseText);
+          console.log(this.responseText + "temperatura");
+          if (chartT.series[0].data.length > 40) {
+            chartT.series[0].addPoint([x, y], true, true, true);
+          } else {
+            chartT.series[0].addPoint([x, y], true, false, true);
+          }
+        }
+      };
+      xhttp.open("GET", "/temperature", true);
+      xhttp.send();
+    }, 5000);
 
-  setInterval(function () {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        if (this.responseText == "1") {
-          document.getElementById("informacion").innerHTML =
-          `<div class="informacion1">
+    // var chartHumityEarth = new Highcharts.Chart({
+    //   chart: { renderTo: "chart-humidityeart" },
+    //   title: { text: "Humidity Earth" },
+    //   series: [
+    //     {
+    //       showInLegend: false,
+    //       data: [],
+    //     },
+    //   ],
+    //   plotOptions: {
+    //     line: {
+    //       animation: false,
+    //       dataLabels: { enabled: true },
+    //     },
+    //     series: { color: "#18a53e" },
+    //   },
+    //   xAxis: {
+    //     type: "datetime",
+    //     dateTimeLabelFormats: { second: "%H:%M:%S" },
+    //   },
+    //   yAxis: {
+    //     title: { text: "Humidity Earth (%)" },
+    //   },
+    //   credits: { enabled: false },
+    // });
+    setInterval(function () {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("humidityeart").innerHTML = this.responseText;
+          var x = new Date().getTime()
+          var y = parseFloat(this.responseText);
+          console.log(this.responseText + "humidity Earth");
+          // if (chartHumityEarth.series[0].data.length > 40) {
+          //   chartHumityEarth.series[0].addPoint([x, y], true, true, true);
+          // } else {
+          //   chartHumityEarth.series[0].addPoint([x, y], true, false, true);
+          // }
+        }
+      };
+      xhttp.open("GET", "/humidityeart", true);
+      xhttp.send();
+    }, 5000);
+
+    setInterval(function () {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          if (this.responseText == "1") {
+            document.getElementById(
+              "informacion"
+            ).innerHTML = `<div class="informacion1">
             <h4>
               La planta necesita Agua
               <i class="fas fa-exclamation-triangle" style="color:#b82406;"></i>
@@ -150,10 +191,10 @@
             <i class="fas fa-seedling fa-2x" style="color:#177a2d;"></i>
            </div>
           `;
-        }
-        else if (this.responseText == "2") {
-          document.getElementById("informacion").innerHTML =
-          `<div class="informacion2">
+          } else if (this.responseText == "2") {
+            document.getElementById(
+              "informacion"
+            ).innerHTML = `<div class="informacion2">
             <h4>
               La planta Tiene mucha Humedad
               <i class="fas fa-exclamation-triangle" style="color:#078dbe;"></i>
@@ -162,15 +203,13 @@
             <i class="fas fa-seedling fa-2x" style="color:#0c906b;"></i>
           </div>
           `;
+          } else {
+            document.getElementById("informacion").innerHTML = ``;
+          }
         }
-        else {
-          document.getElementById("informacion").innerHTML = ``;
-        }
-      }
-    };
-    xhttp.open("GET", "/verificar", true);
-    xhttp.send();
-  }, 5000);
-</script>
-
+      };
+      xhttp.open("GET", "/verificar", true);
+      xhttp.send();
+    }, 5000);
+  </script>
 </html>
