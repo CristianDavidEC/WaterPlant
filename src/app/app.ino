@@ -5,11 +5,12 @@
 #include <DHT.h>
 #include "SPIFFS.h"
 
-const char *ssid = "FLIAGONZALEZ";
-const char *password = "10264928";
+const char *ssid = "RedmiNote7";
+const char *password = "12345678";
 
-const int dry = 300;
-const int wet = 0; 
+const int dry = 3360;
+const int wet = 1500; 
+const int pin_cap = 36;
 
 #define DHTPIN 25 
 #define DHTTYPE DHT11 // DHT 11
@@ -51,7 +52,7 @@ String readDHTHumidity()
 
 String leer_humedad_cap()
 {
-    int sensorVal = analogRead(A5);
+    int sensorVal = analogRead(pin_cap);
     int percentageHumididy = map(sensorVal,dry, wet, 0, 100);
     Serial.println("Humedad Tierra: " + String(percentageHumididy) + " %");
     return String(percentageHumididy);
@@ -96,7 +97,7 @@ void setup()
 {
     // Serial port for debugging purposes
     Serial.begin(115200);
-
+    pinMode(pin_cap, INPUT);
     dht.begin();
 
     if (!SPIFFS.begin(true))
