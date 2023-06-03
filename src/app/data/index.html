@@ -85,7 +85,7 @@
       };
       xhttp.open("GET", "/humidity", true);
       xhttp.send();
-    }, 5000);
+    }, 3000);
 
     var chartT = new Highcharts.Chart({
       chart: { renderTo: "chart-temperature" },
@@ -129,33 +129,8 @@
       };
       xhttp.open("GET", "/temperature", true);
       xhttp.send();
-    }, 5000);
+    }, 3000);
 
-    // var chartHumityEarth = new Highcharts.Chart({
-    //   chart: { renderTo: "chart-humidityeart" },
-    //   title: { text: "Humidity Earth" },
-    //   series: [
-    //     {
-    //       showInLegend: false,
-    //       data: [],
-    //     },
-    //   ],
-    //   plotOptions: {
-    //     line: {
-    //       animation: false,
-    //       dataLabels: { enabled: true },
-    //     },
-    //     series: { color: "#18a53e" },
-    //   },
-    //   xAxis: {
-    //     type: "datetime",
-    //     dateTimeLabelFormats: { second: "%H:%M:%S" },
-    //   },
-    //   yAxis: {
-    //     title: { text: "Humidity Earth (%)" },
-    //   },
-    //   credits: { enabled: false },
-    // });
     setInterval(function () {
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
@@ -164,16 +139,11 @@
           var x = new Date().getTime()
           var y = parseFloat(this.responseText);
           console.log(this.responseText + "humidity Earth");
-          // if (chartHumityEarth.series[0].data.length > 40) {
-          //   chartHumityEarth.series[0].addPoint([x, y], true, true, true);
-          // } else {
-          //   chartHumityEarth.series[0].addPoint([x, y], true, false, true);
-          // }
         }
       };
       xhttp.open("GET", "/humidityeart", true);
       xhttp.send();
-    }, 5000);
+    }, 3000);
 
     setInterval(function () {
       var xhttp = new XMLHttpRequest();
@@ -210,6 +180,6 @@
       };
       xhttp.open("GET", "/verificar", true);
       xhttp.send();
-    }, 5000);
+    }, 3000);
   </script>
 </html>
