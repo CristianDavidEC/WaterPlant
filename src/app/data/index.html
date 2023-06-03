@@ -17,28 +17,61 @@
 
     <div id="informacion"></div>
 
-    <p>
-      <i class="fas fa-thermometer-half" style="color: #059e8a"></i>
-      <span class="dht-labels">Temperature</span>
-      <span id="temperature">%TEMPERATURE%</span>
-      <sup class="units">&deg;C</sup>
-    </p>
+    <div class="measurement-wrapper">
+      <p>
+        <i class="fas fa-thermometer-half" style="color: #059e8a"></i>
+        <span class="dht-labels">Temperature</span>
+        <span id="temperature">%TEMPERATURE%</span>
+        <sup class="units">&deg;C</sup>
+      </p>
+      <div class="switch-button">
+        <input
+          type="checkbox"
+          name="switch-button"
+          id="switch-temperature"
+          class="switch-button__checkbox"
+        />
+        <label for="switch-temperature" class="switch-button__label"></label>
+      </div>
+    </div>
     <div id="chart-temperature" class="container"></div>
 
-    <p>
-      <i class="fas fa-tint" style="color: #00add6"></i>
-      <span class="dht-labels">Humidity</span>
-      <span id="humidity">%HUMIDITY%</span>
-      <sup class="units">&percnt;</sup>
-    </p>
+    <div class="measurement-wrapper">
+      <p>
+        <i class="fas fa-tint" style="color: #00add6"></i>
+        <span class="dht-labels">Humidity</span>
+        <span id="humidity">%HUMIDITY%</span>
+        <sup class="units">&percnt;</sup>
+      </p>
+      <div class="switch-button">
+        <input
+          type="checkbox"
+          name="switch-button"
+          id="switch-humidity"
+          class="switch-button__checkbox"
+        />
+        <label for="switch-humidity" class="switch-button__label"></label>
+      </div>
+    </div>
     <div id="chart-humidity" class="container"></div>
 
-    <p>
-      <i class="fas fa-leaf" style="color: #18a53e"></i>
-      <span class="dht-labels">Humedad En Tierra</span>
-      <span id="humidityeart">%HUMIDITYEART%</span>
-      <sup class="units">&percnt;</sup>
-    </p>
+    <div class="measurement-wrapper">
+      <p>
+        <i class="fas fa-leaf" style="color: #18a53e"></i>
+        <span class="dht-labels">Humedad En Tierra</span>
+        <span id="humidityeart">%HUMIDITYEART%</span>
+        <sup class="units">&percnt;</sup>
+      </p>
+      <div class="switch-button">
+        <input
+          type="checkbox"
+          name="switch-button"
+          id="switch-humidityeart"
+          class="switch-button__checkbox"
+        />
+        <label for="switch-humidityeart" class="switch-button__label"></label>
+      </div>
+    </div>
 
     <div id="chart-humidityeart" class="container"></div>
   </body>
@@ -161,7 +194,7 @@
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
           document.getElementById("humidityeart").innerHTML = this.responseText;
-          var x = new Date().getTime()
+          var x = new Date().getTime();
           var y = parseFloat(this.responseText);
           console.log(this.responseText + "humidity Earth");
           // if (chartHumityEarth.series[0].data.length > 40) {

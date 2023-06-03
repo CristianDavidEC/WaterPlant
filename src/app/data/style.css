@@ -1,3 +1,10 @@
+:root {
+  --color-green: #00a878;
+  --color-red: red;
+  --color-button: #fdffff;
+  --color-black: #000;
+}
+
 html {
   font-family: Arial;
   display: inline-block;
@@ -14,7 +21,7 @@ p {
   font-size: 3.0rem;
 }
 
-.informacion1{
+.informacion1 {
   font-size: 1.5rem;
   color: #b82406;
   border: 2px solid #b82406;
@@ -22,7 +29,7 @@ p {
   padding-bottom: 20px;
 }
 
-.informacion2{
+.informacion2 {
   font-size: 1.5rem;
   color: #1569f1;
   border: 2px solid #0f62e6;
@@ -38,4 +45,47 @@ p {
   font-size: 1.5rem;
   vertical-align: middle;
   padding-bottom: 15px;
+}
+
+.measurement-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.switch-button {
+  display: inline-block;
+}
+
+.switch-button .switch-button__checkbox {
+  display: none;
+}
+
+.switch-button .switch-button__label {
+  background-color: var(--color-red);
+  width: 5rem;
+  height: 3rem;
+  border-radius: 3rem;
+  display: inline-block;
+  position: relative;
+}
+
+.switch-button .switch-button__label:before {
+  transition: .2s;
+  display: block;
+  position: absolute;
+  width: 3rem;
+  height: 3rem;
+  background-color: var(--color-button);
+  content: '';
+  border-radius: 50%;
+  box-shadow: inset 0px 0px 0px 1px var(--color-black);
+}
+
+.switch-button .switch-button__checkbox:checked+.switch-button__label {
+  background-color: var(--color-green);
+}
+
+.switch-button .switch-button__checkbox:checked+.switch-button__label:before {
+  transform: translateX(2rem);
 }
