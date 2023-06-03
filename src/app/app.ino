@@ -131,7 +131,7 @@ void setup()
     server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send_P(200, "text/plain", readDHTHumidity().c_str()); });
     
-    server.on("/humidityeart", HTTP_GET, [](AsyncWebServerRequest *request)
+    server.on("/eart", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send_P(200, "text/plain", leer_humedad_cap().c_str()); });
     
     server.on("/verificar", HTTP_GET, [](AsyncWebServerRequest *request)
