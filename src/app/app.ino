@@ -5,14 +5,14 @@
 #include <DHT.h>
 #include "SPIFFS.h"
 
-const char *ssid = "RedmiNote7";
+const char *ssid = "sin_cobertura";
 const char *password = "12345678";
 
 const int dry = 3360;
 const int wet = 1500; 
 const int pin_cap = 36;
 
-#define DHTPIN 25 
+#define DHTPIN 25
 #define DHTTYPE DHT11 // DHT 11
 DHT dht(DHTPIN, DHTTYPE);
 AsyncWebServer server(80);
@@ -21,6 +21,8 @@ AsyncWebServer server(80);
 // -------------- Functions --------------
 String readDHTTemperature()
 {
+    Serial.println(dht.read());
+    
     float t = dht.readTemperature();
     if (isnan(t))
     {
@@ -36,7 +38,6 @@ String readDHTTemperature()
 
 String readDHTHumidity()
 {
-    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
     float h = dht.readHumidity();
     if (isnan(h))
     {
@@ -130,7 +131,7 @@ void setup()
     server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send_P(200, "text/plain", readDHTHumidity().c_str()); });
     
-    server.on("/humidityeart", HTTP_GET, [](AsyncWebServerRequest *request)
+    server.on("/eart", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send_P(200, "text/plain", leer_humedad_cap().c_str()); });
     
     server.on("/verificar", HTTP_GET, [](AsyncWebServerRequest *request)

@@ -59,7 +59,7 @@
       <p>
         <i class="fas fa-leaf" style="color: #18a53e"></i>
         <span class="dht-labels">Humedad En Tierra</span>
-        <span id="humidityeart">%HUMIDITYEART%</span>
+        <span id="eart">%HUMIDITYEART%</span>
         <sup class="units">&percnt;</sup>
       </p>
       <div class="switch-button">
@@ -72,11 +72,56 @@
         <label for="switch-humidityeart" class="switch-button__label"></label>
       </div>
     </div>
-
-    <div id="chart-humidityeart" class="container"></div>
+    <div id="chart-eart" class="container"></div>
   </body>
   <script>
-    var chartH = new Highcharts.Chart({
+    /*Graphic and petition to ear sensor*/
+    let chartEarth = new Highcharts.Chart({
+      chart: { renderTo: "chart-eart" },
+      title: { text: "Eart" },
+      series: [
+        {
+          showInLegend: false,
+          data: [],
+        },
+      ],
+      plotOptions: {
+        line: {
+          animation: false,
+          dataLabels: { enabled: true },
+        },
+        series: { color: "#00add6" },
+      },
+      xAxis: {
+        type: "datetime",
+        dateTimeLabelFormats: { second: "%H:%M:%S" },
+      },
+      yAxis: {
+        title: { text: "Eart (%)" },
+      },
+      credits: { enabled: false },
+    });
+    setInterval(function () {
+      let xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("eart").innerHTML = this.responseText;
+          let x = new Date().getTime();
+          let y = parseFloat(this.responseText);
+          console.log(this.responseText + "humidity Earth");
+          if (chartEarth.series[0].data.length > 40) {
+            chartEarth.series[0].addPoint([x, y], true, true, true);
+          } else {
+            chartEarth.series[0].addPoint([x, y], true, false, true);
+          }
+        }
+      };
+      xhttp.open("GET", "/eart", true);
+      xhttp.send();
+    }, 3000);
+
+    /*Graphic and petition to humidity sensor*/
+    let chartH = new Highcharts.Chart({
       chart: { renderTo: "chart-humidity" },
       title: { text: "Humidity" },
       series: [
@@ -102,13 +147,13 @@
       credits: { enabled: false },
     });
     setInterval(function () {
-      var xhttp = new XMLHttpRequest();
+      let xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
           document.getElementById("humidity").innerHTML = this.responseText;
           console.log(this.responseText + "Humedad");
-          var x = new Date().getTime(),
-            y = parseFloat(this.responseText);
+          let x = new Date().getTime();
+          let y = parseFloat(this.responseText);
           if (chartH.series[0].data.length > 40) {
             chartH.series[0].addPoint([x, y], true, true, true);
           } else {
@@ -118,9 +163,10 @@
       };
       xhttp.open("GET", "/humidity", true);
       xhttp.send();
-    }, 5000);
+    }, 3000);
 
-    var chartT = new Highcharts.Chart({
+    /*Graphic and petition to temperature sensor*/
+    let chartT = new Highcharts.Chart({
       chart: { renderTo: "chart-temperature" },
       title: { text: "Temperature" },
       series: [
@@ -146,12 +192,12 @@
       credits: { enabled: false },
     });
     setInterval(function () {
-      var xhttp = new XMLHttpRequest();
+      let xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
           document.getElementById("temperature").innerHTML = this.responseText;
-          var x = new Date().getTime(),
-            y = parseFloat(this.responseText);
+          let x = new Date().getTime();
+          let y = parseFloat(this.responseText);
           console.log(this.responseText + "temperatura");
           if (chartT.series[0].data.length > 40) {
             chartT.series[0].addPoint([x, y], true, true, true);
@@ -162,33 +208,9 @@
       };
       xhttp.open("GET", "/temperature", true);
       xhttp.send();
-    }, 5000);
+    }, 3000);
 
-    // var chartHumityEarth = new Highcharts.Chart({
-    //   chart: { renderTo: "chart-humidityeart" },
-    //   title: { text: "Humidity Earth" },
-    //   series: [
-    //     {
-    //       showInLegend: false,
-    //       data: [],
-    //     },
-    //   ],
-    //   plotOptions: {
-    //     line: {
-    //       animation: false,
-    //       dataLabels: { enabled: true },
-    //     },
-    //     series: { color: "#18a53e" },
-    //   },
-    //   xAxis: {
-    //     type: "datetime",
-    //     dateTimeLabelFormats: { second: "%H:%M:%S" },
-    //   },
-    //   yAxis: {
-    //     title: { text: "Humidity Earth (%)" },
-    //   },
-    //   credits: { enabled: false },
-    // });
+    /*Graphic and petition validate data sensors*/
     setInterval(function () {
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
@@ -243,6 +265,6 @@
       };
       xhttp.open("GET", "/verificar", true);
       xhttp.send();
-    }, 5000);
+    }, 3000);
   </script>
 </html>
