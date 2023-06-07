@@ -5,6 +5,13 @@
 #include <DHT.h>
 #include "SPIFFS.h"
 
+//para hacer peticiones post
+#include <ArduinoJson.h>//instalar si no está
+#include <HTTPClient.h>//instalar si no está
+#include <WiFiMulti.h>
+ 
+WiFiMulti wifiMulti;//para hacer peticiones post
+
 const char *ssid = "CRISTIAN-PC";
 const char *password = "12345678";
 
@@ -77,6 +84,43 @@ String processor(const String &var) {
   return String();
 }
 
+void postDataToServer() {
+ 
+  Serial.println("Intentando conectar");
+  if (wifiMulti.run() == WL_CONNECTED) {
+     
+    HTTPClient http;   
+     
+    http.begin("https://back-water-plant-production.up.railway.app/measurements");  
+    http.addHeader("Content-Type", "application/json");         
+     
+    StaticJsonDocument<200> doc;
+
+    //datos
+    doc["soilMoisture"] = leer_humedad_cap();
+    doc["temperature"] = readDHTTemperature();
+    doc["airHumidity"] = readDHTHumidity();
+   
+    String requestBody;
+    serializeJson(doc, requestBody);
+     
+    int httpResponseCode = http.POST(requestBody);
+ 
+    if(httpResponseCode>0){
+       
+      String response = http.getString();                       
+       
+      Serial.println(httpResponseCode);   
+      Serial.println(response);
+     
+    }
+    else {
+     Serial.println("Error al conectar");       
+    }
+     
+  }
+}
+
 void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);
@@ -125,6 +169,8 @@ void setup() {
   });
 
   server.begin();
+
+  wifiMulti.addAP(ssid, password);//peticiones post
 }
 
 void loop() {
@@ -142,6 +188,8 @@ void loop() {
     // Lance una interrupción cuando haya demasiada humedad
     // Puede llamar la alarma de sonido aqui
   }
+
+  postDataToServer();//peticiones post
 
   delay(1000);
 }
