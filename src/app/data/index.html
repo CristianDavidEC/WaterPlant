@@ -21,7 +21,7 @@
       <p>
         <i class="fas fa-thermometer-half" style="color: #059e8a"></i>
         <span class="dht-labels">Temperature</span>
-        <span id="temperature">%TEMPERATURE%</span>
+        <span id="temperature" class="measurement-value">%TEMPERATURE%</span>
         <sup class="units">&deg;C</sup>
       </p>
       <div class="switch-button">
@@ -30,6 +30,7 @@
           name="switch-button"
           id="switch-temperature"
           class="switch-button__checkbox"
+          checked
         />
         <label for="switch-temperature" class="switch-button__label"></label>
       </div>
@@ -40,7 +41,7 @@
       <p>
         <i class="fas fa-tint" style="color: #00add6"></i>
         <span class="dht-labels">Humidity</span>
-        <span id="humidity">%HUMIDITY%</span>
+        <span id="humidity" class="measurement-value">%HUMIDITY%</span>
         <sup class="units">&percnt;</sup>
       </p>
       <div class="switch-button">
@@ -49,6 +50,7 @@
           name="switch-button"
           id="switch-humidity"
           class="switch-button__checkbox"
+          checked
         />
         <label for="switch-humidity" class="switch-button__label"></label>
       </div>
@@ -59,7 +61,7 @@
       <p>
         <i class="fas fa-leaf" style="color: #18a53e"></i>
         <span class="dht-labels">Humedad En Tierra</span>
-        <span id="eart">%HUMIDITYEART%</span>
+        <span id="eart" class="measurement-value">%HUMIDITYEART%</span>
         <sup class="units">&percnt;</sup>
       </p>
       <div class="switch-button">
@@ -68,6 +70,7 @@
           name="switch-button"
           id="switch-humidityeart"
           class="switch-button__checkbox"
+          checked
         />
         <label for="switch-humidityeart" class="switch-button__label"></label>
       </div>
@@ -266,5 +269,25 @@
       xhttp.open("GET", "/verificar", true);
       xhttp.send();
     }, 3000);
+
+    /*Hidden graphic*/
+    const checkboxes = document.querySelectorAll(".switch-button__checkbox");
+    const containers = document.querySelectorAll(".container");
+    const values = document.querySelectorAll(".measurement-value");
+    const units = document.querySelectorAll(".units");
+
+    checkboxes.forEach(function (checkbox, index) {
+      checkbox.addEventListener("change", function () {
+        if (checkbox.checked) {
+          containers[index].style.visibility = "visible";
+          values[index].style.visibility = "visible";
+          units[index].style.visibility = "visible";
+        } else {
+          containers[index].style.visibility = "hidden";
+          values[index].style.visibility = "hidden";
+          units[index].style.visibility = "hidden";
+        }
+      });
+    });
   </script>
 </html>
