@@ -130,12 +130,12 @@ void setup() {
 void loop() {
   if (verificar() == "1") {
     Serial.println("Activa Sistema de Riego");
-    digitalWrite(pin_rele, HIGH);
+    digitalWrite(pin_rele, LOW);
     delay(2000);
   }
   else if (verificar() == "0") {
     Serial.println("Desactiva Sistema de Riego");
-    digitalWrite(pin_rele, LOW);
+    digitalWrite(pin_rele, HIGH);
     delay(2000);
   }
   else {
