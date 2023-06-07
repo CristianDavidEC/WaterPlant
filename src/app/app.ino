@@ -59,7 +59,7 @@ String verificar() {
 
   if (tem >= 25 && hum < 30 && perHumididyEar < 20) {
     return "1";
-  } else if (tem < 20 && hum > 50 || perHumididyEar > 70) {
+  } else if (tem < 20 && hum > 50 || perHumididyEar > 80) {
     return "2";
   } else {
     return "0";
