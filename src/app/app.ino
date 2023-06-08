@@ -4,6 +4,7 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include "SPIFFS.h"
+#include <Arduino.h>
 
 //para hacer peticiones post
 #include <ArduinoJson.h>//instalar si no está
@@ -19,6 +20,8 @@ const int dry = 3360;
 const int wet = 1500;
 const int pin_cap = 36;
 const int pin_rele = 26;
+const int pin_outInter = 12;
+const byte pin_inter = 14;
 
 #define DHTPIN 25
 #define DHTTYPE DHT11  // DHT 11
@@ -121,12 +124,21 @@ void postDataToServer() {
   }
 }
 
+void IRAM_ATTR interrup() {
+  Serial.println("Demasiada Humedad -------- Interrupcion");
+}
+
 void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);
   pinMode(pin_cap, INPUT);
   pinMode(pin_rele, OUTPUT);
+  pinMode(pin_outInter, OUTPUT);
+  pinMode(pin_inter, INPUT_PULLUP);
+  
   dht.begin();
+
+  attachInterrupt(digitalPinToInterrupt(pin_inter), interrup, RISING);
 
   if (!SPIFFS.begin(true)) {
     Serial.println("An Error has occurred while mounting SPIFFS");
@@ -174,22 +186,22 @@ void setup() {
 }
 
 void loop() {
-  if (verificar() == "1") {
-    Serial.println("Activa Sistema de Riego");
-    digitalWrite(pin_rele, LOW);
-    delay(2000);
-  }
-  else if (verificar() == "0") {
-    Serial.println("Desactiva Sistema de Riego");
-    digitalWrite(pin_rele, HIGH);
-    delay(2000);
-  }
-  else {
-    // Lance una interrupción cuando haya demasiada humedad
-    // Puede llamar la alarma de sonido aqui
-  }
+  // if (verificar() == "1") {
+  //   digitalWrite(pin_rele, LOW);
+  //   delay(2000);
+  // }
+  // else if (verificar() == "0") {
+  //   digitalWrite(pin_rele, HIGH);
+  //   delay(2000);
+  // }
+  // else {
+  //   //
+  // }
 
-  postDataToServer();//peticiones post
+  digitalWrite(pin_outInter, HIGH);
+  //postDataToServer();//peticiones post
 
-  delay(1000);
+  delay(3000);
+
+  digitalWrite(pin_outInter, LOW);
 }
