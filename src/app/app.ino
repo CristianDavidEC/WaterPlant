@@ -5,6 +5,8 @@
 #include <DHT.h>
 #include "SPIFFS.h"
 #include <Arduino.h>
+//#include <analogWrite.h>
+
 
 //para hacer peticiones post
 #include <ArduinoJson.h>//instalar si no está
@@ -13,7 +15,7 @@
  
 WiFiMulti wifiMulti;//para hacer peticiones post
 
-const char *ssid = "CRISTIAN-PC";
+const char *ssid = "RedmiNote";
 const char *password = "12345678";
 
 const int dry = 3360;
@@ -22,11 +24,14 @@ const int pin_cap = 36;
 const int pin_rele = 26;
 const int pin_outInter = 12;
 const byte pin_inter = 14;
+const int pin_alarma = 34;
 
 #define DHTPIN 25
 #define DHTTYPE DHT11  // DHT 11
+//#define TONE_PIN 34
 DHT dht(DHTPIN, DHTTYPE);
 AsyncWebServer server(80);
+//Tone toneGenerator;
 
 
 // -------------- Functions --------------
@@ -125,7 +130,7 @@ void postDataToServer() {
 }
 
 void IRAM_ATTR interrup() {
-  Serial.println("Demasiada Humedad -------- Interrupcion");
+  //toneGenerator.play(1000, 1000);
 }
 
 void setup() {
@@ -135,6 +140,8 @@ void setup() {
   pinMode(pin_rele, OUTPUT);
   pinMode(pin_outInter, OUTPUT);
   pinMode(pin_inter, INPUT_PULLUP);
+  pinMode(pin_alarma, OUTPUT);
+  //toneGenerator.begin(TONE_PIN);
   
   dht.begin();
 
@@ -186,22 +193,21 @@ void setup() {
 }
 
 void loop() {
-  // if (verificar() == "1") {
-  //   digitalWrite(pin_rele, LOW);
-  //   delay(2000);
-  // }
-  // else if (verificar() == "0") {
-  //   digitalWrite(pin_rele, HIGH);
-  //   delay(2000);
-  // }
-  // else {
-  //   //
-  // }
+  if (verificar() == "1") {
+    digitalWrite(pin_rele, LOW);
+    delay(2000);
+  }
+  else if (verificar() == "0") {
+    digitalWrite(pin_rele, HIGH);
+    delay(2000);
+  }
+  else {
+    digitalWrite(pin_outInter, HIGH);
+    digitalWrite(pin_outInter, LOW);
+    
+  }
 
-  digitalWrite(pin_outInter, HIGH);
-  //postDataToServer();//peticiones post
-
-  delay(3000);
-
-  digitalWrite(pin_outInter, LOW);
+  postDataToServer();//peticiones post
+  delay(3000);  
 }
+
