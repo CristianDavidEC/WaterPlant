@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>WaterPlant</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <link
@@ -10,6 +11,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    
   </head>
 
   <body>
@@ -99,7 +101,7 @@
           animation: false,
           dataLabels: { enabled: true },
         },
-        series: { color: "#00add6" },
+        series: { color: "#18a53e" },
       },
       xAxis: {
         type: "datetime",
@@ -218,26 +220,6 @@
       xhttp.open("GET", "/temperature", true);
       xhttp.send();
     }, 3000);
-
-    /*Graphic and petition validate data sensors*/
-    setInterval(function () {
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("humidityeart").innerHTML = this.responseText;
-          var x = new Date().getTime();
-          var y = parseFloat(this.responseText);
-          console.log(this.responseText + "humidity Earth");
-          // if (chartHumityEarth.series[0].data.length > 40) {
-          //   chartHumityEarth.series[0].addPoint([x, y], true, true, true);
-          // } else {
-          //   chartHumityEarth.series[0].addPoint([x, y], true, false, true);
-          // }
-        }
-      };
-      xhttp.open("GET", "/humidityeart", true);
-      xhttp.send();
-    }, 5000);
 
     setInterval(function () {
       var xhttp = new XMLHttpRequest();
