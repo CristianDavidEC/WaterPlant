@@ -76,6 +76,12 @@
       </div>
     </div>
     <div id="chart-eart" class="container"></div>
+    <figure class="highcharts-figure">
+      <div id="container"></div>
+      <p class="highcharts-description">
+        Mediciones de los sensores a lo largo del tiempo
+      </p>
+    </figure>
   </body>
   <script>
     /*Graphic and petition to ear sensor*/
@@ -289,5 +295,113 @@
         }
       });
     });
+
+    /*Graphic and petition to historyr*/
+    let data = [];
+
+    async function fetchData() {
+      try {
+        const response = await fetch(
+          "https://back-water-plant-production.up.railway.app/measurements"
+        );
+        const result = await response.json();
+        data = result;
+        return result;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    function formatData(data) {
+      data.forEach(function (obj) {
+        obj.soilMoisture = parseInt(obj.soilMoisture);
+        obj.temperature = parseInt(obj.temperature);
+        obj.airHumidity = parseInt(obj.airHumidity);
+      });
+      var categories = data.map(function (point) {
+        return point.createdAt;
+      });
+
+      var soilMoisture = data.map(function (point) {
+        return point.soilMoisture;
+      });
+
+      var temperature = data.map(function (point) {
+        return point.temperature;
+      });
+
+      var airHumidity = data.map(function (point) {
+        return point.airHumidity;
+      });
+
+      return {
+        categories: categories,
+        soilMoisture: soilMoisture,
+        temperature: temperature,
+        airHumidity: airHumidity,
+      };
+    }
+
+    // Create the chart
+    function createChart(data) {
+      Highcharts.chart("container", {
+        chart: {
+          type: "spline",
+        },
+        title: {
+          text: "Historial de mediciones",
+        },
+        xAxis: {
+          categories: formatData(data).categories,
+          accessibility: {
+            description: "Time",
+          },
+        },
+        yAxis: {
+          title: {
+            text: "Value",
+          },
+          labels: {
+            format: "{value}",
+          },
+        },
+        tooltip: {
+          crosshairs: true,
+          shared: true,
+        },
+        plotOptions: {
+          spline: {
+            marker: {
+              radius: 4,
+              lineColor: "#666666",
+              lineWidth: 1,
+            },
+          },
+        },
+        series: [
+          {
+            name: "Humedad en Tierra",
+            data: formatData(data).soilMoisture,
+          },
+          {
+            name: "Temperatura",
+            data: formatData(data).temperature,
+          },
+          {
+            name: "Humendad en Aire",
+            data: formatData(data).airHumidity,
+          },
+        ],
+      });
+    }
+
+    // Obtener los datos y crear el gráfico
+    fetchData()
+      .then((result) => {
+        createChart(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   </script>
 </html>
