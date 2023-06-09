@@ -89,3 +89,8 @@ p {
 .switch-button .switch-button__checkbox:checked+.switch-button__label:before {
   transform: translateX(2rem);
 }
+
+.highcharts-description {
+  font-size: 2rem;
+  color: gray;
+}
