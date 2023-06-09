@@ -24,7 +24,7 @@ const int pin_cap = 36;
 const int pin_rele = 26;
 const int pin_outInter = 12;
 const byte pin_inter = 14;
-const int pin_alarma = 34;
+const int pin_alarma = 23;
 
 #define DHTPIN 25
 #define DHTTYPE DHT11  // DHT 11
@@ -206,6 +206,8 @@ void loop() {
     digitalWrite(pin_outInter, LOW);
     
   }
+
+  //analogWrite(pin_alarma, 128);
 
   postDataToServer();//peticiones post
   delay(3000);  
