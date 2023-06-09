@@ -5,6 +5,7 @@
 #include <DHT.h>
 #include "SPIFFS.h"
 #include <Arduino.h>
+#include <EEPROM.h>
 
 //para hacer peticiones post
 #include <ArduinoJson.h>//instalar si no está
@@ -23,21 +24,20 @@ const int pin_rele = 26;
 const int pin_outInter = 12;
 const byte pin_inter = 14;
 const int pin_alarma = 23;
-
+int cont_humidity = 0;
 
 // prop pwm
 const int frecuencia = 5000;
 const int canal = 0;
 const int resolucion = 8;
 
-
+//Memoria
+#define EEPROM_SIZE 4194304 
 #define DHTPIN 25
 #define DHTTYPE DHT11  // DHT 11
-//#define TONE_PIN 34
+
 DHT dht(DHTPIN, DHTTYPE);
 AsyncWebServer server(80);
-//Tone toneGenerator;
-
 
 // -------------- Functions --------------
 int readHumidityEar() {
@@ -139,15 +139,17 @@ void playAlert () {
 }
 
 void IRAM_ATTR interrup() {
-  Serial.println("Alarmaaaaaaa");      
-  // int percentageHumididy = readHumidityEar();
-  //int valuePwm = map(percentageHumididy, 75, 100, 30, 255);
-  // Serial.println(valuePwm);
-  // ledcSetup(canal, frecuencia, resolucion);
-  // ledcAttachPin(pin_alarma, canal);
-  // ledcWrite(canal, valuePwm);
-  // delay(2000);
-  // ledcWrite(canal, 0);
+  cont_humidity +=1;
+  int address = 4000000;
+  EEPROM.write(address, cont_humidity);//EEPROM.put(address, boardId);
+  EEPROM.commit();
+
+  int read;
+  read = EEPROM.read(address); //EEPROM.get(address,readId);
+  Serial.print("Read humidity exceeded= ");
+  Serial.print(read);
+  Serial.println(cont_humidity);
+  EEPROM.end();
 }
 
 void setup() {
@@ -158,12 +160,12 @@ void setup() {
   pinMode(pin_outInter, OUTPUT);
   pinMode(pin_inter, INPUT_PULLUP);
   pinMode(pin_alarma, OUTPUT);
-
   ledcSetup(canal, frecuencia, resolucion);
   ledcAttachPin(pin_alarma, canal);
+
+  EEPROM.begin(EEPROM_SIZE);
   
   dht.begin();
-
   attachInterrupt(digitalPinToInterrupt(pin_inter), interrup, RISING);
 
   if (!SPIFFS.begin(true)) {
