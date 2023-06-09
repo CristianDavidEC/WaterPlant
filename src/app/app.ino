@@ -5,8 +5,7 @@
 #include <DHT.h>
 #include "SPIFFS.h"
 #include <Arduino.h>
-//#include <analogWrite.h>
-
+#include <EEPROM.h>
 
 //para hacer peticiones post
 #include <ArduinoJson.h>//instalar si no está
@@ -24,20 +23,30 @@ const int pin_cap = 36;
 const int pin_rele = 26;
 const int pin_outInter = 12;
 const byte pin_inter = 14;
-const int pin_alarma = 34;
+const int pin_alarma = 23;
+int cont_humidity = 0;
 
+// prop pwm
+const int frecuencia = 5000;
+const int canal = 0;
+const int resolucion = 8;
+
+//Memoria
+#define EEPROM_SIZE 4194304 
 #define DHTPIN 25
 #define DHTTYPE DHT11  // DHT 11
-//#define TONE_PIN 34
+
 DHT dht(DHTPIN, DHTTYPE);
 AsyncWebServer server(80);
-//Tone toneGenerator;
-
 
 // -------------- Functions --------------
-String readDHTTemperature() {
-  Serial.println(dht.read());
+int readHumidityEar() {
+  int sensorVal = analogRead(pin_cap);
+  int percentageHumididy = map(sensorVal, dry, wet, 0, 100);
+  return percentageHumididy;
+}
 
+String readDHTTemperature() {
   float t = dht.readTemperature();
   if (isnan(t)) {
     Serial.println("Failed to read from DHT sensor!");
@@ -60,8 +69,7 @@ String readDHTHumidity() {
 }
 
 String leer_humedad_cap() {
-  int sensorVal = analogRead(pin_cap);
-  int percentageHumididy = map(sensorVal, dry, wet, 0, 100);
+  int percentageHumididy = readHumidityEar();
   Serial.println("Humedad Tierra: " + String(percentageHumididy) + " %");
   return String(percentageHumididy);
 }
@@ -69,12 +77,11 @@ String leer_humedad_cap() {
 String verificar() {
   float tem = dht.readTemperature();
   float hum = dht.readHumidity();
-  int sensorVal = analogRead(pin_cap);
-  int perHumididyEar = map(sensorVal, dry, wet, 0, 100);
+  int perHumididyEar = readHumidityEar();
 
   if (tem >= 25 && hum < 30 && perHumididyEar < 20) {
     return "1";
-  } else if (tem < 20 && hum > 50 || perHumididyEar > 80) {
+  } else if (tem < 20 && hum > 50 || perHumididyEar > 74) {
     return "2";
   } else {
     return "0";
@@ -93,8 +100,6 @@ String processor(const String &var) {
 }
 
 void postDataToServer() {
- 
-  Serial.println("Intentando conectar");
   if (wifiMulti.run() == WL_CONNECTED) {
      
     HTTPClient http;   
@@ -114,13 +119,9 @@ void postDataToServer() {
      
     int httpResponseCode = http.POST(requestBody);
  
-    if(httpResponseCode>0){
-       
+    if(httpResponseCode==201){
       String response = http.getString();                       
-       
-      Serial.println(httpResponseCode);   
       Serial.println(response);
-     
     }
     else {
      Serial.println("Error al conectar");       
@@ -129,8 +130,26 @@ void postDataToServer() {
   }
 }
 
+void playAlert () {
+    int percentageHumididy = readHumidityEar();
+    int valuePwm = map(percentageHumididy, 75, 100, 30, 255);
+    ledcWrite(canal, valuePwm);
+    delay(2000);
+    ledcWrite(canal, 0);
+}
+
 void IRAM_ATTR interrup() {
-  //toneGenerator.play(1000, 1000);
+  cont_humidity +=1;
+  int address = 4000000;
+  EEPROM.write(address, cont_humidity);//EEPROM.put(address, boardId);
+  EEPROM.commit();
+
+  int read;
+  read = EEPROM.read(address); //EEPROM.get(address,readId);
+  Serial.print("Read humidity exceeded= ");
+  Serial.print(read);
+  Serial.println(cont_humidity);
+  EEPROM.end();
 }
 
 void setup() {
@@ -141,10 +160,12 @@ void setup() {
   pinMode(pin_outInter, OUTPUT);
   pinMode(pin_inter, INPUT_PULLUP);
   pinMode(pin_alarma, OUTPUT);
-  //toneGenerator.begin(TONE_PIN);
+  ledcSetup(canal, frecuencia, resolucion);
+  ledcAttachPin(pin_alarma, canal);
+
+  EEPROM.begin(EEPROM_SIZE);
   
   dht.begin();
-
   attachInterrupt(digitalPinToInterrupt(pin_inter), interrup, RISING);
 
   if (!SPIFFS.begin(true)) {
@@ -204,7 +225,7 @@ void loop() {
   else {
     digitalWrite(pin_outInter, HIGH);
     digitalWrite(pin_outInter, LOW);
-    
+    playAlert();
   }
 
   postDataToServer();//peticiones post
